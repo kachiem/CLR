@@ -1,4 +1,5 @@
-from keras.callbacks import *
+from tensorflow import keras
+from tensorflow.keras.callbacks import *
 
 class CyclicLR(Callback):
     """This callback implements a cyclical learning rate policy (CLR).
@@ -112,9 +113,9 @@ class CyclicLR(Callback):
         logs = logs or {}
 
         if self.clr_iterations == 0:
-            K.set_value(self.model.optimizer.lr, self.base_lr)
+            tf.keras.K.set_value(self.model.optimizer.lr, self.base_lr)
         else:
-            K.set_value(self.model.optimizer.lr, self.clr())        
+            tf.keras.K.set_value(self.model.optimizer.lr, self.clr())        
             
     def on_batch_end(self, epoch, logs=None):
         
@@ -122,10 +123,10 @@ class CyclicLR(Callback):
         self.trn_iterations += 1
         self.clr_iterations += 1
 
-        self.history.setdefault('lr', []).append(K.get_value(self.model.optimizer.lr))
+        self.history.setdefault('lr', []).append(tf.keras.K.get_value(self.model.optimizer.lr))
         self.history.setdefault('iterations', []).append(self.trn_iterations)
 
         for k, v in logs.items():
             self.history.setdefault(k, []).append(v)
         
-        K.set_value(self.model.optimizer.lr, self.clr())
+        tf.keras.K.set_value(self.model.optimizer.lr, self.clr())
